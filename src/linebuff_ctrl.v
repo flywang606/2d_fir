@@ -1,7 +1,8 @@
 module linebuff_ctrl #(
 parameter		DATA_WIDTH		=	8,
 parameter		ADDR_WIDTH		=	32,
-parameter		TAP_NUMS		= 3
+parameter		TAP_NUMS		=	3,
+parameter		REPEAT_NUN		=	2
 )
 (
 input									clk,
@@ -37,7 +38,7 @@ else if(ce_i)
 	pixel_cnt_r <= pixel_cnt_nxt_c;
 end
 
-assign prccessing_data_nxt_c=first_ln_i?{data_pixel_r,{(TAP_NUMS-1){data_pixel_r}}}:{data_pixel_r,rd_data_i};
+assign prccessing_data_nxt_c=first_ln_i?{data_pixel_r,{REPEAT_NUN{data_pixel_r}}}:{data_pixel_r,rd_data_i};
 always @(posedge clk or negedge rst_n) 
 begin
 if(!rst_n)

@@ -1,10 +1,10 @@
 module 2d_fir_top #(
-parameter		DATA_WIDTH		=	8,
-parameter		ADDR_WIDTH		=	32,
+parameter		DATA_WIDTH		= 8,
+parameter		ADDR_WIDTH		= 32,
 parameter		TAP_NUMS		= 3,
 parameter		COEFF_WIDTH		= 14,
-parameter		PIXEL_NUM		= 2048
-)
+parameter		PIXEL_NUM		= 2048,
+parameter		REPEAT_NUN		= 2
 )
 (
 input									clk,
@@ -87,7 +87,7 @@ end
 //fixed me -for last line
 assign v_end_c = v_size_i;
 assign v_cnt_nxt_c = ce_i?((v_cnt_r == v_end_c)?{PIXEL_NUM{1'b0}}
-						:(pixel_cnt_r==h_end_c)?(v_cnt_r+1'b1):v_cnt_r):v_cnt_r;
+							:(pixel_cnt_r==h_end_c)?(v_cnt_r+1'b1):v_cnt_r):v_cnt_r;
 always@(posedge clk)
 begin
 	if(!rst)
@@ -99,7 +99,7 @@ end
 assign first_ln_c = (v_cnt_r=={PIXEL_NUM{1'b0}})&ce_i;
 //assign first_last_line_flag_c = ((v_cnt_r=={PIXEL_NUM{1'b0}})|(v_cnt_r == v_end_c))&ce_i;
 //assign first_last_pixel_flag_c = ((pixel_cnt_r=={PIXEL_NUM{1'b0}})|(pixel_cnt_r == h_end_c))&ce_i;
-assign ln_data_out_en_c = ((v_cnt_r > (TAP_NUMS-1))&ce_i;
+//assign ln_data_out_en_c = ((v_cnt_r > (TAP_NUMS-1))&ce_i;
 
 assign data_in_nxt_c = ce_i?((v_cnt_r==v_end_c)?data20_v_r:data_i):{DATA_WIDTH{1'b0}};
 always@(posedge clk)
@@ -112,9 +112,9 @@ end
 
 //linebuff ctrl
 linebuff_ctrl #(
-.DATA_WIDTH(DATA_WIDTH),
-.ADDR_WIDTH(ADDR_WIDTH),
-.TAP_NUMS(TAP_NUMS)
+	.DATA_WIDTH(DATA_WIDTH),
+	.ADDR_WIDTH(ADDR_WIDTH),
+	.TAP_NUMS(TAP_NUMS)
 )
 linbuf_ctrl
 (
@@ -132,7 +132,7 @@ linbuf_ctrl
 	.output_en_o(ln_data_out_en_c),//fixed me
 	.output_data_o(ln_data_out_c),
 );
-assign ln_rd_en_c = ce_i?((v_cnt_r > (TAP_NUMS-'d2))?1'b1:1'b0):1'b0;
+assign ln_rd_en_c = ce_i?((v_cnt_r > (REPEAT_NUN-1'b1))?1'b1:1'b0):1'b0;
 //assign rd_data_c[DATA_WIDTH-1:0] = !ln_rd_en_c?data_in_r:rd_data_c[DATA_WIDTH-1:0];
 sram linebuf_16x2048#(
 
@@ -164,7 +164,7 @@ begin
 	end
 end
 
-//mul		
+//mul
 always @(posedge clk or negedge rst_n) 
 begin
 	if(!rst_n)
