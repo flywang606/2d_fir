@@ -31,6 +31,23 @@ reg [TAP_NUMS*DATA_WIDTH-1:0]           prccessing_data_r;
 wire [TAP_NUMS*DATA_WIDTH-1:0]          prccessing_data_nxt_c;
 reg [1:0]                               ce_shift_r;//fixed me
 
+reg										first_ln_r;
+reg										valid_r;
+
+always @(posedge clk or negedge rst_n) 
+begin
+	if(!rst_n)
+	begin
+		first_ln_r <= 1'b0;
+		valid_r <= 1'b0;
+	end
+	else if(ce_i)
+	begin
+		first_ln_r <= first_ln_i;
+		valid_r <= ce_i;
+	end
+end
+
 assign pixel_cnt_nxt_nxt_c = ((rd_en_i|wr_en_o)&&(pixel_cnt_nxt_r!=(h_size_i-1'b1)))?(pixel_cnt_nxt_r+1'b1):{ADDR_WIDTH{1'b0}};
 
 always @(posedge clk or negedge rst_n) 
@@ -47,7 +64,7 @@ begin
 	end
 end
 
-assign prccessing_data_nxt_c=first_ln_i?{data_pixel_r,{REPEAT_NUN{data_pixel_r}}}:{data_pixel_r,rd_data_i};
+assign prccessing_data_nxt_c=first_ln_r?{data_pixel_r,{REPEAT_NUN{data_pixel_r}}}:{data_pixel_r,rd_data_i};
 always @(posedge clk or negedge rst_n) 
 begin
 if(!rst_n)
@@ -56,7 +73,7 @@ begin
     prccessing_data_r <= {(TAP_NUMS*DATA_WIDTH){1'b0}};
     ce_shift_r <= {2{1'b0}};
 end
-else if(ce_i)
+else if(valid_r)
 begin
     data_pixel_r <= data_pixel_i;
     prccessing_data_r <= prccessing_data_nxt_c;
@@ -66,7 +83,7 @@ end
 end
 
 assign rd_addr_o = pixel_cnt_nxt_nxt_c;
-assign output_en_o = ce_shift_r[1]&rd_en_i&(~first_ln_i);
+assign output_en_o = ce_shift_r[1]&rd_en_i&(~first_ln_r);
 assign output_data_o = prccessing_data_r;
 assign wr_addr_o = pixel_cnt_r;
 assign wr_en_o = ce_shift_r[0];

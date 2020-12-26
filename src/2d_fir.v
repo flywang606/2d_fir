@@ -60,7 +60,7 @@ wire									valid_h_out_c;
 
 //edge repeate
 //
-assign h_end_c = h_size_i;
+assign h_end_c = h_size_i-1'b1;
 assign pixel_cnt_nxt_c = ce_i?((pixel_cnt_r==h_end_c)?{LINE_CNT{1'b0}}
                                                     :(pixel_cnt_r+1'b1)):{LINE_CNT{1'b0}};
 always@(posedge clk)
@@ -72,7 +72,7 @@ begin
 end
 
 //fixed me -for last line
-assign v_end_c = v_size_i;
+assign v_end_c = v_size_i-1'b1;
 assign v_cnt_nxt_c = ce_i?((v_cnt_r == v_end_c)?{LINE_CNT{1'b0}}
                             :(pixel_cnt_r==h_end_c)?(v_cnt_r+1'b1):v_cnt_r):{LINE_CNT{1'b0}};
 always@(posedge clk)
@@ -121,6 +121,7 @@ linbuf_ctrl
     .output_en_o(ln_data_out_en_c),//fixed me
     .output_data_o(ln_data_out_c)
 );
+
 assign ln_rd_en_c = valid_i?1'b1:1'b0;//valid_i?((v_cnt_r > (REPEAT_NUN-1'b1))?1'b1:1'b0):1'b0;
 
 sram #(
