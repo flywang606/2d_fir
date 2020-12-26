@@ -7,7 +7,7 @@ logic			valid_o;
 logic [8-1:0]   data_in;
 logic [8-1:0]   data_out;
 logic			valid_i;
-logic [8-1:0]	idx;
+logic [8-1:0]   idx;
 
 initial 
 begin
@@ -25,12 +25,12 @@ begin
 	ce_i ='d1;
 	idx = 'd1;
 	
-	repeat(64*64) 
+	repeat(64) 
 	begin
       @(posedge clk);
 		valid_i ='d1;
         data_in = idx;//(DATA_WIDTH)'($urandom_range(0,2 ** DATA_WIDTH));
-		idx = idx+'d1;
+		idx=idx+'d1;
     end
 	//ce_i ='d0;
 	data_in = 'd0;
