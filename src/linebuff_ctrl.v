@@ -83,10 +83,10 @@ end
 end
 
 assign rd_addr_o = pixel_cnt_nxt_nxt_c;
-assign output_en_o = ce_shift_r[1]&rd_en_i&(~first_ln_r);
-assign output_data_o = prccessing_data_r;
+assign output_en_o = valid_r&(~first_ln_r);
+assign output_data_o = prccessing_data_nxt_c;
 assign wr_addr_o = pixel_cnt_r;
-assign wr_en_o = ce_shift_r[0];
+assign wr_en_o = valid_r?1'b1:1'b0;//ce_shift_r[0];
 assign wr_data_o = prccessing_data_r[TAP_NUMS*DATA_WIDTH-1:DATA_WIDTH];
 
 endmodule
