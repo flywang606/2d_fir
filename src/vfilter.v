@@ -34,6 +34,7 @@ reg [COEFF_WIDTH+DATA_WIDTH+2:0]        mult_v_r;
 
 reg										valid_st0_r;
 reg										valid_st1_r;
+reg										valid_st2_r;
 
 reg [DATA_WIDTH-1:0]					data_out_r;
 
@@ -44,11 +45,13 @@ begin
 	begin
 		valid_st0_r <= 1'b0;
 		valid_st1_r <= 1'b0;
+		valid_st2_r <= 1'b0;
 	end
 	else
 	begin
 		valid_st0_r <= valid_i;
 		valid_st1_r <= valid_st0_r;
+		valid_st2_r <= valid_st1_r;
 	end
 	
 end
@@ -123,7 +126,7 @@ begin
 end
 
 assign center_o = center_cur_r;
-assign valid_o = valid_st1_r;
+assign valid_o = valid_st2_r;
 assign data_o = data_out_r;
 
 endmodule

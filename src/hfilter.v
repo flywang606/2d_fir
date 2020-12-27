@@ -18,7 +18,6 @@ output [DATA_WIDTH-1:0]					center_o,
 output									valid_o
 );
 
-wire [DATA_WIDTH-1:0]                   data_h_nxt_in_c;
 reg [DATA_WIDTH-1:0]                    data00_h_r;
 reg [DATA_WIDTH-1:0]                    data01_h_r;
 reg [DATA_WIDTH-1:0]                    data02_h_r;
@@ -66,7 +65,7 @@ begin
     else if(valid_i)//fixed me
     begin
         data00_h_r <= data_i;
-        data01_h_r <= data01_h_r;
+        data01_h_r <= data00_h_r;
         data02_h_r <= data01_h_r;
 		center_pre_r <= center_i;
 		center_cur_r <= center_pre_r;
